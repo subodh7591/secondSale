@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block albums_active %}active{% endblock %}
+
+{% block body %}
+
+<div class="items-container container-fluid">
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>All Items Here</h3>
+        </div>
+        {% if all_items %}
+            {% for item in all_items %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'category:detail' item.id %}">
+                            <img src="{{ item.item_logo.url }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ item.item_name }}</h2>
+                            <h4>{{ item.item_price }}</h4>
+                            <h4>{{item.item_status}}</h4>
+
+                            <!-- View Details -->
+                            <a href="{% url 'category:detail' item.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+
+                        </div>
+                    </div>
+                </div>
+    </div>
+</div>
+
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <br>
+                <a href="#">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Item
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- If user searches and there are songs -->
+    {% if items %}
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Items</h3>
+            </div>
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>item_name</th>
+                                    <th>item_price</th>
+                                    <th>item_status</th>
+                                    <th>Seller_info</th>
+                                    <th>general_detail</th>
+                                    <th>description</th>
+                                    <th>item_spec</th>
+                                    <th>delivery</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in Detail %}
+                                    <tr>
+                                        <td>{{ detail.seller_info }}</td>
+                                        <td>{{ detail.item.item_name }}</td>
+                                        <td>
+                                            <a target="_blank" href="{{ detail.image_file.url }}">
+                                                <button type="button" class="btn btn-success btn-xs">
+                                                    <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'category:detail' detail.detail.id %}">
+                                                <img src="{{ detail.item.item_logo }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                            </a>
+                                            <a href="{% url 'category:detail' detail.item.id %}">{{ detail.item.item_title }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'music:favorite' song.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if song.is_favorite %}active{% endif %}"></span></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
