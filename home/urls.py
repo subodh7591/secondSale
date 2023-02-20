@@ -12,7 +12,10 @@ urlpatterns = [
     path("register/", views.Registration.as_view(), name='signup'),
     path('logout/', views.SignOutView.as_view(), name='logout'),
     path('post_ad/', views.PostAdvertisement.as_view(), name='post_ad'),
-    path('product_details/<int:pk>/', views.ShowProductDetails.as_view(), name='product_details')
+    path('product_lists/<int:category_id>/<int:page>/', views.GetProductList.as_view(), name='product_list'),
+    path('product_details/<int:pk>/', views.ShowProductDetails.as_view(), name='product_details'),
+    path('recommendations/<int:user_id>/<int:product_id>/', views.GetRecommendations.as_veiw(),
+         name="get_recommendations")
 ]
 
 if settings.DEBUG:

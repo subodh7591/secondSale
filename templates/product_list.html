@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Product Details</title>
+{% endblock%}
+
+{% block body %}
+{% for product in products %}
+<div>{{product.title}}
+    <div class="overflow-hidden" style="width: 100px; height: 100px;">
+        <img width="100" height="100" src="{{product.product_image.url}}" alt="">
+    </div>
+</div>
+
+
+{% endfor %}
+
+{% if page_obj.has_previous %}
+    <a href="{% url 'product_list' category_id page_obj.previous_page_number}">
+        <
+    </a>
+{% endif %}
+{% for page_num in page_obj.paginator.get_elided_page_range %}
+{% if page_num == page_obj.paginator.ELLIPSIS %}
+    {{page_num}}
+{% else %}
+<a href="{% url 'product_list' category_id page_num %}" class="{% if page_num == page_obj.number %}current{% endif %}">
+    {{page_num}}
+</a>
+
+
+
+{% endif %}
+{% endfor %}
+{% if page_obj.has_previous %}
+    <a href="{% url 'product_list' category_id page_obj.next_page_number}">
+        >
+    </a>
+{{page_obj.previous_page_number}}
+{% endif %}
+
+<p>
+    current page:<b>{{page_obj.number}}</b>
+</p>
+
+{% endblock %}
+
+</html>
