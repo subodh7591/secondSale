@@ -14,7 +14,8 @@ urlpatterns = [
     path('post_ad/', views.PostAdvertisement.as_view(), name='post_ad'),
     path('product_lists/<int:category_id>/<int:page>/', views.GetProductList.as_view(), name='product_list'),
     path('product_details/<int:pk>/', views.ShowProductDetails.as_view(), name='product_details'),
-    path('recommendations/<int:user_id>/<int:product_id>/', views.GetRecommendations.as_veiw(),
+    path('product_search/<int:page>/', views.SearchProduct.as_view(), name='product_search'),
+    path('recommendations/<int:user_id>/<int:product_id>/', views.GetRecommendations.as_view(),
          name="get_recommendations")
 ]
 

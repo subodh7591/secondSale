@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import logout, login
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
@@ -122,6 +123,7 @@ class GetProductList(View):
         paginated_products = paginator.get_page(page)
         return render(request=request,
                       context={'category_id': category.id,
+                               'category_title': category.name,
                                'products': paginated_products.object_list,
                                'page_obj': paginated_products,
                                },
@@ -141,5 +143,21 @@ class ShowProductDetails(View):
                       template_name="product_detail.html")
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class SearchProduct(View):
+    def get(self, request, page=1):
+        query = request.GET.get('q')
+        products = Advertisement.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        paginator = Paginator(products, per_page=8)
+        paginated_products = paginator.get_page(page)
+        return render(request=request,
+                      context={
+                          'products': paginated_products.object_list,
+                          'page_obj': paginated_products,
+                      },
+                      template_name="search_list.html")
+
+
 class GetRecommendations(View):
-    pass
+    def get(self, request, pk):
+        return HttpResponseRedirect('login')
