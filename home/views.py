@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth import logout, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -13,13 +14,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from home.forms import UserForm
-from home.models import Advertisement, Category, Comments, Replies
+from home.models import Advertisement, Category, Comments, Replies, UserRating
 
 
 class Home(View):
     def get(self, request):
         latest_ads = Advertisement.objects.all().order_by('id').reverse()[0:8]
-        premium_ads = Advertisement.objects.filter(premium_ad=True).order_by('id').reverse()[0:4]
+        premium_ads = Advertisement.objects.filter(premium_ad=True).order_by('id').reverse()[0:2]
         categories = Category.objects.all()
         return render(request,
                       context={'latest_ads': latest_ads,
@@ -89,6 +90,7 @@ class PostAdvertisement(View):
                       )
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class PostComment(View):
     def post(self, request, pk):
         advertisement_obj = Advertisement.objects.get(id=pk)
@@ -100,7 +102,7 @@ class PostComment(View):
             posted_by=request.user
         )
         comment_obj.save()
-        return redirect('product_details')
+        return redirect('product_details', pk=f'{advertisement_obj.id}')
 
 
 class PostRelies(View):
@@ -134,7 +136,24 @@ class ShowProductDetails(View):
     def get(self, request, pk):
         comment_to_replies = []
         item = Advertisement.objects.get(id=pk)
+
+        Advertisement.objects.filter(id=pk).update(views=item.views + 1)
+        if request.user.is_authenticated:
+            user_rating = UserRating.objects.filter(
+                Q(advertisement=item) & Q(user=request.user)).first()
+
+            if user_rating:
+                user_rating.num_of_clicks += 1
+                user_rating.save()
+            else:
+                user_rating = UserRating(
+                    advertisement=item,
+                    user=request.user,
+                    num_of_clicks=1,
+                )
+                user_rating.save()
         comments = Comments.objects.filter(product=item).order_by('id')
+
         for comment in comments:
             replies = Replies.objects.filter(comment=comment).order_by('id')
             comment_to_replies.append({comment: replies})
@@ -156,6 +175,27 @@ class SearchProduct(View):
                           'page_obj': paginated_products,
                       },
                       template_name="search_list.html")
+
+
+@method_decorator(login_required, name='dispatch')
+class Dashboard(View):
+    def get(self, request):
+        ad_type = 'all'
+        user = User.objects.get(id=request.user.id)
+        ads_posted = Advertisement.objects.filter(posted_by=user)
+        if ad_type == 'sold':
+            ads = ads_posted.filter(sold=True).all()
+        elif ad_type == 'live':
+            ads = ads_posted.filter(sold=False).all()
+        else:
+            ads = ads_posted.all()
+        return render(
+            request=request,
+            context={
+                'ads': ads
+            },
+            template_name='dashboard.html'
+        )
 
 
 class GetRecommendations(View):
