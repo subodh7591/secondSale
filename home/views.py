@@ -204,6 +204,14 @@ class Dashboard(View):
         )
 
 
+class MarkSold(View):
+    def get(self, request, pk):
+        ad = Advertisement.objects.get(id=pk)
+        ad.sold = True
+        ad.save()
+        return redirect('dashboard')
+
+
 class GetRecommendations(object):
     @staticmethod
     def get_recommendations(user_id, product_id):
