@@ -20,7 +20,8 @@ urlpatterns = [
     #      name="get_recommendations"),
     path('post_comment/<int:pk>/', views.PostComment.as_view(), name='post_comment'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
-    path('sold/<int:pk>', views.MarkSold.as_view(), name='sold')
+    path('sold/<int:pk>', views.MarkSold.as_view(), name='sold'),
+    path('delete_ad/<int:pk>', views.DeleteAd.as_view(), name='delete_ad')
 
 ]
 

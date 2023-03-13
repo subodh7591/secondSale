@@ -212,6 +212,12 @@ class MarkSold(View):
         return redirect('dashboard')
 
 
+class DeleteAd(View):
+    def get(self, request, pk):
+        Advertisement.objects.get(id=pk).delete()
+        return redirect('dashboard')
+
+
 class GetRecommendations(object):
     @staticmethod
     def get_recommendations(user_id, product_id):
