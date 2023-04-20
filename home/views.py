@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import requests
 from django.contrib import messages
@@ -229,5 +230,5 @@ class GetRecommendations(View):
             r = requests.get(url=URL, params=PARAMS)
             data = r.json()
         except:
-            data = [1, 3, 4, 9, 10, 11, 12, 13, 14]
+            data= random.randint(30)
         return data
