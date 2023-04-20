@@ -141,7 +141,8 @@ class ShowProductDetails(View):
         item = Advertisement.objects.get(id=pk)
         Advertisement.objects.filter(id=pk).update(views=item.views + 1)
         recommendation_ids = GetRecommendations.get_recommendations(user_id=request.user.id, product_id=item.id)
-        recommendations = Advertisement.objects.filter(id__in=recommendation_ids).order_by("views")
+        # recommendations = Advertisement.objects.filter(id__in=recommendation_ids).order_by("views")
+        recommendations = Advertisement.objects.all().order_by("views")[0:5]
         if request.user.is_authenticated:
             user_rating = UserRating.objects.filter(
                 Q(advertisement=item) & Q(user=request.user)).first()
@@ -228,5 +229,5 @@ class GetRecommendations(object):
             r = requests.get(url=URL, params=PARAMS)
             data = r.json()
         except:
-            data = []
+            data = [1, 3, 4,9, 10,11,12,13,14]
         return data
