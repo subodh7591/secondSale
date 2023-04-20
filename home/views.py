@@ -219,7 +219,7 @@ class DeleteAd(View):
         return redirect('dashboard')
 
 
-class GetRecommendations(object):
+class GetRecommendations(View):
     @staticmethod
     def get_recommendations(user_id, product_id):
         try:
@@ -229,5 +229,5 @@ class GetRecommendations(object):
             r = requests.get(url=URL, params=PARAMS)
             data = r.json()
         except:
-            data = [1, 3, 4,9, 10,11,12,13,14]
+            data = [1, 3, 4, 9, 10, 11, 12, 13, 14]
         return data
